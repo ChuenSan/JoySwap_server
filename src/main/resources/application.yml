@@ -49,7 +49,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 minio:
-  endpoint: http://localhost:9001 # 服务器地址，但是域名过期了
+  endpoint: http://localhost:9000
   accesskey: 9zoEaM0MFguWFnbWNyCh
   secret-key: ELrgzkdQNNZrU3XVHFadTxXMDLyHD7gYsPhBGZ4J
   bucket: joy-swap

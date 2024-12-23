@@ -6,11 +6,16 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgq.market.constants.ResultCode;
+import com.sgq.market.entity.ChatList;
+import com.sgq.market.entity.ChatMessage;
 import com.sgq.market.entity.User;
 import com.sgq.market.exception.ServiceException;
+import com.sgq.market.mapper.ChatListMapper;
+import com.sgq.market.mapper.ChatMessageMapper;
 import com.sgq.market.model.R;
 import com.sgq.market.model.dto.UpdateUserInfoDto;
 import com.sgq.market.model.dto.UserAdminPageDto;
@@ -20,7 +25,9 @@ import com.sgq.market.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -37,6 +44,10 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
   @Autowired
   private StringRedisTemplate redisTemplate;
+  @Autowired
+  private ChatMessageMapper chatMessageMapper;
+  @Autowired
+  private ChatListMapper chatListMapper;
   
   @Override
   public SaTokenInfo login(UserLoginDto request) {
@@ -93,19 +104,78 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     return StpUtil.getTokenInfo();
   }
   
+  /**
+   * 更新用户信息方法
+   * 此方法用于根据当前登录用户提交的信息来更新其个人资料
+   * 它首先获取当前登录用户的ID，然后根据该ID获取用户对象
+   * 如果用户对象为空，则抛出服务异常，表明未找到用户
+   * 接着，方法将用户提交的昵称、简介和头像信息设置到用户对象中
+   * 并将审核状态设置为0，表示待审核
+   * 最后，方法尝试更新用户信息如果更新失败，则抛出服务异常，表明更新错误
+   *
+   * @param dto 包含用户提交的新信息的数据传输对象
+   */
   @Override
+  @Transactional
   public void updateUserInfo(UpdateUserInfoDto dto) {
+    // 获取当前登录用户的ID
     String id = StpUtil.getLoginIdAsString();
+    // 根据用户ID获取用户对象
     User user = getById(id);
+    // 如果用户对象为空，则抛出服务异常，表明未找到用户
     if (BeanUtil.isEmpty(user)) throw new ServiceException(ResultCode.NotFindError);
+    // 将用户提交的昵称设置到用户对象中
     user.setCheckNickName(dto.getNickName());
+    // 将用户提交的简介设置到用户对象中
     user.setCheckIntro(dto.getIntro());
+    // 将用户提交的头像设置到用户对象中
     user.setCheckAvatar(dto.getAvatar());
+    // 将审核状态设置为0，表示待审核
     user.setCheckStatus(0);
+    // 尝试更新用户信息
     boolean update = updateById(user);
+    // 根据id更新chat_message
+    updateChatMessages(id, dto);
+
+    // 根据id更新chat_list
+    updateChatLists(id, dto);
+
+    // 如果更新失败，则抛出服务异常，表明更新错误
     if (!update) throw new ServiceException(ResultCode.UpdateError);
   }
-  
+
+  private void updateChatMessages(String userId, UpdateUserInfoDto dto) {
+    List<ChatMessage> chatMessages = chatMessageMapper.selectList(
+            Wrappers.<ChatMessage>lambdaQuery().eq(ChatMessage::getFromUserId, userId)
+                    .or().eq(ChatMessage::getToUserId, userId)
+    );
+    for (ChatMessage chatMessage : chatMessages) {
+      if (chatMessage.getToUserId().equals(userId)) {
+        chatMessage.setToUserNick(dto.getNickName());
+      } else {
+        chatMessage.setFromUserNick(dto.getNickName());
+      }
+      chatMessageMapper.updateById(chatMessage);
+    }
+  }
+
+  private void updateChatLists(String userId, UpdateUserInfoDto dto) {
+    List<ChatList> chatLists = chatListMapper.selectList(
+            Wrappers.<ChatList>lambdaQuery().eq(ChatList::getFromUserId, userId)
+                    .or().eq(ChatList::getToUserId, userId)
+    );
+    for (ChatList chatList : chatLists) {
+      if (chatList.getFromUserId().equals(userId)) {
+        chatList.setFromUserNick(dto.getNickName());
+        chatList.setFromUserAvatar(dto.getAvatar());
+      } else {
+        chatList.setToUserNick(dto.getNickName());
+        chatList.setToUserAvatar(dto.getAvatar());
+      }
+      chatListMapper.updateById(chatList);
+    }
+  }
+
   @Override
   public Map getNum1UserStat() {
   return null;
