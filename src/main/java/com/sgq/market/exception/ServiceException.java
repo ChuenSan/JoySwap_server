@@ -5,7 +5,7 @@ import com.sgq.market.constants.ResultCode;
 import lombok.Data;
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @version 1.0
  * @description TODO
  * @date 2023/7/8 19:38

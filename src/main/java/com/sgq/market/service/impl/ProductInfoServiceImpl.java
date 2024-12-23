@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgq.market.constants.ResultCode;
 import com.sgq.market.entity.*;
 import com.sgq.market.service.*;
-import com.zyh.market.entity.*;
+import com.sgq.market.entity.*;
 import com.sgq.market.exception.ServiceException;
 import com.sgq.market.mapper.ProductInfoMapper;
 import com.sgq.market.model.R;
@@ -22,7 +22,7 @@ import com.sgq.market.model.dto.SystemProductInfoPageDto;
 import com.sgq.market.model.vo.ProductInfoDetailVo;
 import com.sgq.market.model.vo.ProductInfoPageVo;
 import com.sgq.market.model.vo.ProductInfoVoucherVo;
-import com.zyh.market.service.*;
+import com.sgq.market.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @version 1.0
  * @description TODO
  * @date 2024/3/1 21:03

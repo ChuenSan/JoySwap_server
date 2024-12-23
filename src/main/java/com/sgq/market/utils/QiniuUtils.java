@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @version 1.0
  * @description TODO
  * @date 2023/2/22 16:08
@@ -28,7 +28,7 @@ public class QiniuUtils {
     public static final String url = "http://rqh2ajoy4.hn-bkt.clouddn.com/";
     private String accessKey = "KmALvfpot_eXEGuUcyRoTW0JltOvGY6taZIaXWBw";
     private String SecretKey = "ZPGpK_wUY59u7kbJx-6TlD-lq0iZnY-Xinwz0x0v";
-    private String bucket = "zhangyihua";
+    private String bucket = "sgq";
 
     public boolean upload(MultipartFile file, String fileName) {
         //构造一个带指定 Region 对象的配置类

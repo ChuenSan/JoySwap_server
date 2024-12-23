@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @version 1.0
  * @description TODO
  * @date 2023/7/7 11:54

@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @description 针对表【user】的数据库操作Service实现
  * @createDate 2024-01-28 16:52:33
  */

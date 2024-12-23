@@ -6,7 +6,7 @@ spring:
     name: reuse_market
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/reuse_market?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/joy_swap?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: root
   redis:
@@ -17,7 +17,7 @@ spring:
         max-active: 8
         min-idle: 0
         max-wait: 100
-    password: 1234
+    password:
   servlet:
     multipart:
       max-file-size: 10MB
@@ -49,8 +49,8 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 minio:
-  endpoint: http://jp.realus.tech:9001
-  accesskey: MuAY4QTRAeDBYymYPH5k
-  secret-key: v4k0yJgwPo96j4cpvwXc11EDm9nnqR2JkXEeW8R2
-  bucket: reuse-market
+  endpoint: http://localhost:9001 # 服务器地址，但是域名过期了
+  accesskey: 9zoEaM0MFguWFnbWNyCh
+  secret-key: ELrgzkdQNNZrU3XVHFadTxXMDLyHD7gYsPhBGZ4J
+  bucket: joy-swap
 

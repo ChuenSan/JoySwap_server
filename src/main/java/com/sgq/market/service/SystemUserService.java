@@ -12,7 +12,7 @@ import com.sgq.market.model.dto.SystemUserPageDto;
 import com.sgq.market.model.dto.SystemUserUpdateDto;
 
 /**
- * @author zhangyihua
+ * @author sgq
  * @version 1.0
  * @description TODO
  * @date 2024/2/18 21:46
