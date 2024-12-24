@@ -43,11 +43,17 @@ public class User implements Serializable {
   @ApiModelProperty("昵称")
   private String nickName;
 
-    /**
+  /**
    * 手机号
    */
   @ApiModelProperty(value ="手机号" , example = "0")
   private Long phone;
+
+  /**
+   * 手机号
+   */
+  @ApiModelProperty(value ="邮箱")
+  private String email;
 
     /**
    * 密码

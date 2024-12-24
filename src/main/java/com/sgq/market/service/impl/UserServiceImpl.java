@@ -22,6 +22,7 @@ import com.sgq.market.model.dto.UserAdminPageDto;
 import com.sgq.market.model.dto.UserLoginDto;
 import com.sgq.market.service.UserService;
 import com.sgq.market.mapper.UserMapper;
+import com.sgq.market.utils.MailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
       user = new User();
       String numbers = RandomUtil.randomNumbers(9);
       user.setNumber(numbers);
-      user.setPhone(Long.valueOf(request.getPhone()));
+//      user.setPhone(Long.valueOf(request.getPhone()));
+      user.setEmail(request.getPhone() + "@sdtbu.edu.cn");
       user.setProvince(request.getProvince());
       user.setCity(request.getCity());
       user.setAvatar("https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png");
@@ -91,10 +93,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
   
   @Override
   public SaTokenInfo loginPwd(UserLoginDto request) {
-    User user = lambdaQuery().eq(User::getPhone, request.getPhone()).one();
-    if(BeanUtil.isEmpty(user))throw new ServiceException(ResultCode.NotFindError,"第一次登陆，请选择手机号登录");
+    User user = lambdaQuery().eq(User::getEmail, request.getPhone() + "@sdtbu.edu.cn").one();
+    if(BeanUtil.isEmpty(user))throw new ServiceException(ResultCode.NotFindError,"第一次登陆，请选择教育邮箱登录");
     String md5 = SaSecureUtil.md5(request.getPassword());
-    if(!md5.equals(user.getPassword())) throw new ServiceException(ResultCode.Fail, "手机号或密码错误");
+    if(!md5.equals(user.getPassword())) throw new ServiceException(ResultCode.Fail, "邮箱或密码错误");
     user.setProvince(request.getProvince());
     user.setCity(request.getCity());
     user.setUpdateTime(new Date().getTime());
@@ -235,7 +237,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
   
   @Override
   public void getLoginCode(String phone) {
-    redisTemplate.opsForValue().set("check:code:" + phone, "123456", 120, TimeUnit.SECONDS);
+    String code = RandomUtil.randomNumbers(6);
+    MailUtils.sendMail(phone + "@sdtbu.edu.cn", "您的验证码为："+code+" 请及时使用，60s后过期！", "乐易");
+    redisTemplate.opsForValue().set("check:code:" + phone, code, 60, TimeUnit.SECONDS);
   }
   
   @Override
